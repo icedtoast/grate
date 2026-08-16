@@ -255,6 +255,35 @@ select ''
         }
 
         [Fact]
+        public void lowercase_go_statement()
+        {
+            const string sql_to_match = "\r\nwhere DataName = 'AttributeKeyMap'\r\ngo ";
+            string expected_scrubbed = "\r\nwhere DataName = 'AttributeKeyMap'\r\n" +
+                                       Batch_terminator_replacement_string + " ";
+            _testOutput.WriteLine(sql_to_match);
+            string sql_statement_scrubbed = Replacer.Replace(sql_to_match);
+            Assert.Equal(expected_scrubbed, sql_statement_scrubbed);
+        }
+
+        [Fact]
+        public void go_after_line_comment_containing_an_apostrophe()
+        {
+            const string sql_to_match = @"select 1 -- '
+GO
+''
+GO
+";
+            string expected_scrubbed = @"select 1 -- '
+" + Batch_terminator_replacement_string + @"
+''
+" + Batch_terminator_replacement_string + @"
+";
+            _testOutput.WriteLine(sql_to_match);
+            string sql_statement_scrubbed = Replacer.Replace(sql_to_match);
+            Assert.Equal(expected_scrubbed, sql_statement_scrubbed);
+        }
+
+        [Fact]
         public void go_with_comment_after()
         {
             string sql_to_match = " GO -- comment";
@@ -432,6 +461,20 @@ select ''
         }
 
         [Fact]
+        public void go_inside_a_multiline_string_literal()
+        {
+            const string sql_to_match = @"select ' 1 --
+GO
+'";
+            const string expected_scrubbed = @"select ' 1 --
+GO
+'";
+            _testOutput.WriteLine(sql_to_match);
+            string sql_statement_scrubbed = _replacer.Replace(sql_to_match);
+            Assert.Equal(expected_scrubbed, sql_statement_scrubbed);
+        }
+
+        [Fact]
         public void
             go_when_between_tick_marks_with_symbols_and_words_before_ending_on_same_line()
         {
@@ -508,6 +551,18 @@ select ''
             string sql_to_match = @"/* GO 
 */";
             string expected_scrubbed = @"/* GO 
+*/";
+            _testOutput.WriteLine(sql_to_match);
+            string sql_statement_scrubbed = _replacer.Replace(sql_to_match);
+            Assert.Equal(expected_scrubbed, sql_statement_scrubbed);
+        }
+
+        [Fact]
+        public void go_inside_of_nested_comments_with_a_line_break()
+        {
+            const string sql_to_match = @"/* /* */ GO 
+*/";
+            const string expected_scrubbed = @"/* /* */ GO 
 */";
             _testOutput.WriteLine(sql_to_match);
             string sql_statement_scrubbed = _replacer.Replace(sql_to_match);
