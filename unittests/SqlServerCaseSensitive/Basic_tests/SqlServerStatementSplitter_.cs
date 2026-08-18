@@ -48,7 +48,7 @@ public class SqlServerStatementSplitter_
             string sql_to_match = @" GO" + "\t";
             _testOutput.WriteLine(sql_to_match);
             var result = _splitter.Split(sql_to_match).ToList();
-            Assert.Equal(["\t"], result);
+            Assert.Empty(result);
         }
 
         [Fact]
