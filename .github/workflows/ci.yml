@@ -73,8 +73,46 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ "ubuntu-latest", "windows-latest" ]
-        category: [ "Basic_tests", "SqlServer", "SqlServerCaseSensitive", "PostgreSQL", "MariaDB", "Sqlite", "Oracle"  ]
+        include:
+          - os: ubuntu-latest
+            category: Basic_tests
+            test_filter: ''
+          - os: ubuntu-latest
+            category: SqlServer
+            test_filter: ''
+          - os: ubuntu-latest
+            category: SqlServerCaseSensitive
+            test_filter: ''
+          - os: ubuntu-latest
+            category: PostgreSQL
+            test_filter: ''
+          - os: ubuntu-latest
+            category: MariaDB
+            test_filter: ''
+          - os: ubuntu-latest
+            category: Sqlite
+            test_filter: ''
+          - os: ubuntu-latest
+            category: Oracle
+            test_filter: ''
+          - os: windows-latest
+            category: Basic_tests
+            test_filter: ''
+          - os: windows-latest
+            category: Sqlite
+            test_filter: ''
+          - os: windows-latest
+            category: SqlServer
+            test_filter: FullyQualifiedName~SqlServer.Basic_tests
+          - os: windows-latest
+            category: SqlServerCaseSensitive
+            test_filter: FullyQualifiedName~SqlServerCaseSensitive.Basic_tests
+          - os: windows-latest
+            category: MariaDB
+            test_filter: FullyQualifiedName~MariaDB.Basic_tests
+          - os: windows-latest
+            category: Oracle
+            test_filter: FullyQualifiedName~Oracle.Basic_tests
         #category: [ "Basic_tests", "Sqlite"  ]
 
     steps:
@@ -92,7 +130,18 @@ jobs:
         $outDir = Join-Path "${{ runner.temp }}" "test-results"
         New-Item -ItemType Directory -Path $outDir -Force | Out-Null
 
-        dotnet test --project unittests/${{ matrix.category }} --coverage --coverage-output-format xml --coverage-output "$outDir/${{ matrix.category }}.xml"
+        $args = @(
+          "--project", "unittests/${{ matrix.category }}",
+          "--coverage",
+          "--coverage-output-format", "xml",
+          "--coverage-output", "$outDir/${{ matrix.category }}.xml"
+        )
+
+        if ("${{ matrix.test_filter }}") {
+          $args += @("--filter", "${{ matrix.test_filter }}")
+        }
+
+        dotnet test @args
       env:
         LogLevel: Warning
         TZ: UTC
