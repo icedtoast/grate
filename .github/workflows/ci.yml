@@ -67,12 +67,13 @@ jobs:
   test:
     name: Run tests
 
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     #needs: build-code
 
     strategy:
       fail-fast: false
       matrix:
+        os: [ "ubuntu-latest", "windows-latest" ]
         category: [ "Basic_tests", "SqlServer", "SqlServerCaseSensitive", "PostgreSQL", "MariaDB", "Sqlite", "Oracle"  ]
         #category: [ "Basic_tests", "Sqlite"  ]
 
@@ -86,12 +87,12 @@ jobs:
           9.0.x
           10.0.x
     - name: Test
+      shell: pwsh
       run: |
-        dotnet test \
-        --project unittests/${{ matrix.category }} \
-        --coverage \
-        --coverage-output-format xml \
-        --coverage-output /tmp/test-results/${{ matrix.category }}.xml
+        $outDir = Join-Path "${{ runner.temp }}" "test-results"
+        New-Item -ItemType Directory -Path $outDir -Force | Out-Null
+
+        dotnet test --project unittests/${{ matrix.category }} --coverage --coverage-output-format xml --coverage-output "$outDir/${{ matrix.category }}.xml"
       env:
         LogLevel: Warning
         TZ: UTC
@@ -100,9 +101,9 @@ jobs:
       if: always()
       uses: actions/upload-artifact@v7
       with:
-        name: "${{ matrix.category }} XML test results"
+        name: "${{ matrix.os }} ${{ matrix.category }} XML test results"
         path: |
-          /tmp/test-results/${{ matrix.category }}.xml
+          ${{ runner.temp }}/test-results/${{ matrix.category }}.xml
         retention-days: 1
 
 
