@@ -16,12 +16,12 @@ public class OracleStatementSplitter_
     public class should_replace_on
     {
         private ITestOutputHelper _testOutput;
-        private OracleStatementSplitter Splitter;
+        private OracleStatementSplitter _splitter;
 
         public should_replace_on(ITestOutputHelper testOutput)
         {
             _testOutput = testOutput;
-            Splitter = new OracleStatementSplitter();
+            _splitter = new OracleStatementSplitter();
         }
 
         [Fact]
@@ -29,7 +29,7 @@ public class OracleStatementSplitter_
         {
             string sql_to_match = OracleSplitterContext.FullSplitter.PLSqlStatement;
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.NotEmpty(result);
             Assert.True(result.Count > 1, "Should split into multiple statements");
             Assert.Equal(result, OracleSplitterContext.FullSplitter.PLSqlStatementScrubbed);
@@ -40,7 +40,7 @@ public class OracleStatementSplitter_
         {
             const string sql_to_match = @" / ";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Empty(result);
         }
 
@@ -49,7 +49,7 @@ public class OracleStatementSplitter_
         {
             string sql_to_match = @" /" + "\t";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Equal(["\t"],result);
         }
 
@@ -58,7 +58,7 @@ public class OracleStatementSplitter_
         {
             const string sql_to_match = @"/";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Empty(result);
         }
 
@@ -68,7 +68,7 @@ public class OracleStatementSplitter_
             const string sql_to_match = @"/
 whatever";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Single(result);
         }
 
@@ -78,7 +78,7 @@ whatever";
             const string sql_to_match = @" /
 ";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Empty(result);
         }
 
@@ -88,7 +88,7 @@ whatever";
         {
             string sql_to_match = $"--{line_ending}/{line_ending}";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Equal(["--" + line_ending], result);
         }
 
@@ -98,7 +98,7 @@ whatever";
         {
             string sql_to_match = $"--{line_ending}/{line_ending}";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Equal(["--" + line_ending, line_ending], result);
         }
 
@@ -109,7 +109,7 @@ whatever";
 /
 ";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Single(result);
         }
 
@@ -120,7 +120,7 @@ whatever";
 /
 ";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Single(result);
         }
 
@@ -131,7 +131,7 @@ whatever";
 /
 ";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Empty(result);
         }
 
@@ -140,7 +140,7 @@ whatever";
         {
             const string sql_to_match = @" / ";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Empty(result);
         }
 
@@ -150,7 +150,7 @@ whatever";
             string sql_to_match = Words_to_check + @" /
 ";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Single(result);
         }
 
@@ -160,7 +160,7 @@ whatever";
             string sql_to_match = Symbols_to_check + Words_to_check + @" /
 ";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Single(result);
         }
 
@@ -170,7 +170,7 @@ whatever";
             string sql_to_match = Words_to_check + Symbols_to_check + @" /
 ";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Single(result);
         }
 
@@ -179,7 +179,7 @@ whatever";
         {
             string sql_to_match = @" / " + Words_to_check;
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Single(result);
         }
 
@@ -188,7 +188,7 @@ whatever";
         {
             string sql_to_match = @" / " + Words_to_check + Symbols_to_check;
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Single(result);
         }
 
@@ -197,7 +197,7 @@ whatever";
         {
             string sql_to_match = Words_to_check + @" / " + Words_to_check;
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Equal([Words_to_check + " "," " + Words_to_check], result);
         }
 
@@ -207,7 +207,7 @@ whatever";
             string sql_to_match = Words_to_check + Symbols_to_check.Replace("'", "").Replace("\"", "") +
                                   " / BOB" + Symbols_to_check;
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Equal([ Words_to_check + Symbols_to_check.Replace("'", "").Replace("\"", "") +
                                   " ", " BOB" + Symbols_to_check], result);
         }
@@ -220,7 +220,7 @@ whatever";
 select ''
 /";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Equal([Words_to_check + " -- '\n", "\nselect ''\n"], result);
         }
 
@@ -229,7 +229,7 @@ select ''
         {
             string sql_to_match = " / -- comment";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Single(result);
         }
 
@@ -238,7 +238,7 @@ select ''
         {
             string sql_to_match = "jalla /;";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Equal(["jalla ", ";"], result);
         }
 
@@ -247,12 +247,12 @@ select ''
     public class should_not_replace_on
     {
         private ITestOutputHelper _testOutput;
-        private OracleStatementSplitter Splitter;
+        private OracleStatementSplitter _splitter;
 
         public should_not_replace_on(ITestOutputHelper testOutput)
         {
             _testOutput = testOutput;
-            Splitter = new OracleStatementSplitter();
+            _splitter = new OracleStatementSplitter();
         }
         
         [Fact]
@@ -261,7 +261,7 @@ select ''
             string sql_to_match = Words_to_check + @"/
 ";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Single(result);
         }
 
@@ -271,7 +271,7 @@ select ''
             string sql_to_match = @"--/
 ";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Single(result);
         }
 
@@ -281,7 +281,7 @@ select ''
             string sql_to_match = @"-- /
 ";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Single(result);
         }
 
@@ -291,7 +291,7 @@ select ''
             string sql_to_match = @"-- / " + Words_to_check + @"
 ";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Single(result);
         }
 
@@ -301,7 +301,7 @@ select ''
             string sql_to_match = @"-- / " + Symbols_to_check + @"
 ";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Single(result);
         }
 
@@ -311,7 +311,7 @@ select ''
             string sql_to_match = "--" + "\t" + @"/
 ";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Single(result);
         }
 
@@ -321,7 +321,7 @@ select ''
             string sql_to_match = @"--" + "\t" + @"/ " + Words_to_check + @"
 ";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Single(result);
         }
 
@@ -331,7 +331,7 @@ select ''
             string sql_to_match = @"--" + "\t" + @"/ " + Symbols_to_check + @"
 ";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Single(result);
         }
 
@@ -341,7 +341,7 @@ select ''
             string sql_to_match = @"-- " + Words_to_check + @" /
 ";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Single(result);
         }
 
@@ -351,7 +351,7 @@ select ''
             const string sql_to_match = @"' /
             '";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Single(result);
         }
 
@@ -361,7 +361,7 @@ select ''
         {
             string sql_to_match = @"' " + Symbols_to_check.Replace("'", string.Empty) + Words_to_check + @" /'";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Single(result);
         }
 
@@ -371,7 +371,7 @@ select ''
             string sql_to_match = @"' " + Symbols_to_check.Replace("'", string.Empty) + Words_to_check + @" /
             '";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Single(result);
         }
 
@@ -381,7 +381,7 @@ select ''
             string sql_to_match = @"' /
             " + Symbols_to_check.Replace("'", string.Empty) + Words_to_check + @"'";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Single(result);
         }
 
@@ -391,7 +391,7 @@ select ''
             string sql_to_match = @"--" + Symbols_to_check + @" /
 ";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Single(result);
         }
 
@@ -402,7 +402,7 @@ select ''
             string sql_to_match = @"--" + Symbols_to_check + Words_to_check + @" /
 ";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Single(result);
         }
 
@@ -411,7 +411,7 @@ select ''
         {
             string sql_to_match = @"/* / */";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Single(result);
         }
 
@@ -421,7 +421,7 @@ select ''
             string sql_to_match = @"/* / 
 */";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Single(result);
         }
 
@@ -434,7 +434,7 @@ select ''
 
 */";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Single(result);
         }
 
@@ -448,7 +448,7 @@ select ''
 
 */";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Single(result);
         }
 
@@ -463,7 +463,7 @@ select ''
 " + Words_to_check + @"
 */";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Single(result);
         }
 
@@ -477,7 +477,7 @@ select ''
 " + Symbols_to_check + @" 
 */";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Single(result);
         }
     }

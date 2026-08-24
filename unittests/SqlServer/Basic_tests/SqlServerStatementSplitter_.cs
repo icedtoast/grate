@@ -14,12 +14,12 @@ public class SqlServerStatementSplitter_
     public class should_replace_on
     {
         private ITestOutputHelper _testOutput;
-        private SqlServerStatementSplitter Splitter;
+        private SqlServerStatementSplitter _splitter;
 
         public should_replace_on(ITestOutputHelper testOutput)
         {
             _testOutput = testOutput;
-            Splitter = new SqlServerStatementSplitter();
+            _splitter = new SqlServerStatementSplitter();
         }
 
         [Fact]
@@ -27,7 +27,7 @@ public class SqlServerStatementSplitter_
         {
             string sql_to_match = SqlServerSplitterContext.FullSplitter.tsql_statement;
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.NotEmpty(result);
             Assert.True(result.Count > 1, "Should split into multiple statements");
             Assert.Equal(result, SqlServerSplitterContext.FullSplitter.tsql_statement_scrubbed);
@@ -38,7 +38,7 @@ public class SqlServerStatementSplitter_
         {
             const string sql_to_match = @" GO ";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Empty(result);
         }
 
@@ -47,7 +47,7 @@ public class SqlServerStatementSplitter_
         {
             string sql_to_match = @" GO" + "\t";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Equal(["\t"], result);
         }
 
@@ -56,7 +56,7 @@ public class SqlServerStatementSplitter_
         {
             const string sql_to_match = @"GO";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Empty(result);
         }
 
@@ -66,7 +66,7 @@ public class SqlServerStatementSplitter_
             const string sql_to_match = @"GO
 whatever";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Single(result);
             Assert.Contains("whatever", result[0]);
         }
@@ -77,7 +77,7 @@ whatever";
             const string sql_to_match = @" GO
 ";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Empty(result);
         }
 
@@ -88,7 +88,7 @@ whatever";
         {
             string sql_to_match = $"--{line_ending}GO{line_ending}";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Equal(["--" + line_ending], result);
         }
 
@@ -99,7 +99,7 @@ whatever";
 GO
 ";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Single(result);
         }
 
@@ -110,7 +110,7 @@ GO
 GO
 ";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Single(result);
         }
 
@@ -121,7 +121,7 @@ GO
 GO
 ";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Empty(result);
         }
 
@@ -130,7 +130,7 @@ GO
         {
             const string sql_to_match = @" GO ";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Empty(result);
         }
 
@@ -140,7 +140,7 @@ GO
             string sql_to_match = Words_to_check + @" GO
 ";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Single(result);
             Assert.Equal(Words_to_check.Trim(), result[0].Trim());
         }
@@ -151,7 +151,7 @@ GO
             string sql_to_match = Symbols_to_check + Words_to_check + @" GO
 ";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Single(result);
         }
 
@@ -161,7 +161,7 @@ GO
             string sql_to_match = Words_to_check + Symbols_to_check + @" GO
 ";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Single(result);
         }
 
@@ -170,7 +170,7 @@ GO
         {
             string sql_to_match = @" GO " + Words_to_check;
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Single(result);
             Assert.Contains(Words_to_check.Substring(0, 5), result[0]);
         }
@@ -180,7 +180,7 @@ GO
         {
             string sql_to_match = @" GO " + Words_to_check + Symbols_to_check;
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Single(result);
         }
 
@@ -189,7 +189,7 @@ GO
         {
             string sql_to_match = Words_to_check + @" GO " + Words_to_check;
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Equal(2, result.Count);
             Assert.Equal(Words_to_check.Trim(), result[0].Trim());
             Assert.Equal(Words_to_check.Trim(), result[1].Trim());
@@ -201,7 +201,7 @@ GO
             string sql_to_match = Words_to_check + Symbols_to_check.Replace("'", "").Replace("\"", "") +
                                   " GO BOB" + Symbols_to_check;
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Equal(2, result.Count);
         }
 
@@ -213,7 +213,7 @@ GO
 select ''
 go";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Equal(2, result.Count);
         }
 
@@ -222,7 +222,7 @@ go";
         {
             const string sql_to_match = "\r\nwhere DataName = 'AttributeKeyMap'\r\ngo ";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Single(result);
             Assert.Contains("DataName", result[0]);
         }
@@ -236,7 +236,7 @@ GO
 GO
 ";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Equal(2, result.Count);
         }
 
@@ -245,7 +245,7 @@ GO
         {
             string sql_to_match = " GO -- comment";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Equal([" -- comment"], result);
         }
 
@@ -254,7 +254,7 @@ GO
         {
             string sql_to_match = "jalla GO;";
             _testOutput.WriteLine(sql_to_match);
-            var result = Splitter.Split(sql_to_match).ToList();
+            var result = _splitter.Split(sql_to_match).ToList();
             Assert.Equal(["jalla ", ";" ], result);
         }
 
